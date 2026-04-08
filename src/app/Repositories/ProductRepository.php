@@ -12,13 +12,8 @@ readonly class ProductRepository
     
     public function getAllProducts(): array
     {
-        $stmt = $this->pdo->query('SELECT code, price FROM products');
-        $catalogue = [];
+        $stmt = $this->pdo->query('SELECT code, name, price FROM products');
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $catalogue[$row['code']] = (float) $row['price'];
-        }
-
-        return $catalogue;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -7,9 +7,14 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Repositories\ProductRepository;
 use App\Services\ProductService;
+use App\Traits\JsonResponse;
+use JsonException;
+use RuntimeException;
 
 class IndexController
 {
+    use JsonResponse;
+    
     private ProductService $productService;
     
     public function __construct()
@@ -23,8 +28,12 @@ class IndexController
 
     public function home(): void
     {
-        $products = $this->productService->getProducts();
-        
-        print_r($products);
+        try {
+            $products = $this->productService->getProducts();
+            
+            $this->json(['products' => $products], 201);
+        } catch (JsonException|RuntimeException $e) {
+            $this->error($e->getMessage(), $e->getCode());
+        }
     }
 }
