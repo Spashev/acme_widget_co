@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use PDO;
+use PDOStatement;
 
 readonly class ProductRepository
 {
@@ -12,8 +13,14 @@ readonly class ProductRepository
     
     public function getAllProducts(): array
     {
-        $stmt = $this->pdo->query('SELECT code, name, price FROM products');
+        /** @var PDOStatement $stmt */
+        $stmt = $this->pdo->query('SELECT code, price FROM products');
+        
+        $products = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $products[$row['code']] = (float) $row['price'];
+        }
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $products;
     }
 }
