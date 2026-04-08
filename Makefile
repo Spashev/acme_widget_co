@@ -20,7 +20,15 @@ ifeq (manage,$(firstword $(MAKECMDGOALS)))
   $(eval $(RUN_ARGS):;@:)
 endif
 
-install: build start composer ## Spin-up the project with minimal data
+env: ## Create .env from .env.example if not exists
+	@if [ ! -f src/.env ]; then \
+		cp src/.env.example src/.env; \
+		echo ">>> .env created from .env.example"; \
+	else \
+		echo ">>> .env already exists, skipping"; \
+	fi
+
+install: env build start composer ## Spin-up the project with minimal data
 
 build: ## Build docker containers
 	$(DOCKER_COMP) build
