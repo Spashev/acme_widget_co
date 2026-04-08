@@ -26,7 +26,7 @@ class IndexController
         try {
             $products = $this->productService->getProducts();
             
-            $this->json(['products' => $products], 201);
+            $this->json(['products' => $products], 200);
         } catch (JsonException|RuntimeException $e) {
             $this->error($e->getMessage(), $e->getCode());
         }
