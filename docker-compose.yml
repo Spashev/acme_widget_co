@@ -1,0 +1,45 @@
+services:
+  acme_app:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    image: acme_app
+    container_name: acme_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./src/:/var/www/html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      PHP_IDE_CONFIG: serverName=server
+    depends_on:
+      - acme_mysql
+
+  acme_nginx:
+    image: nginx:latest
+    container_name: acme_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/conf/nginx:/etc/nginx/conf.d
+    depends_on:
+      - acme_app
+
+  acme_mysql:
+    image: mysql:latest
+    container_name: acme_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: acme
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - acme_mysqldata:/var/lib/mysql
+
+volumes:
+  acme_mysqldata:
