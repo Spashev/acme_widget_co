@@ -11,6 +11,8 @@ services:
       - ./src/:/var/www/html
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    env_file:
+      - ./src/.env
     environment:
       PHP_IDE_CONFIG: serverName=server
     depends_on:
