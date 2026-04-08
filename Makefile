@@ -20,21 +20,17 @@ ifeq (manage,$(firstword $(MAKECMDGOALS)))
   $(eval $(RUN_ARGS):;@:)
 endif
 
-install: build start ## Spin-up the project with minimal data
+install: build start composer ## Spin-up the project with minimal data
 
 build: ## Build docker containers
 	$(DOCKER_COMP) build
 	@echo ">>> Base build done!"
 
-composer: ## Run bash inside app_blca container
+composer: ## Run bash inside app container
 	${APP} composer install
 	@echo ">>> Composer install done!"
 
-migrate: ## Run bash inside app_blca container
-	${APP} php artisan migrate --seed
-	@echo ">>> Migrations done!"
-
-shell: ## Run bash inside app_blca container
+shell: ## Run bash inside app container
 	${APP} bash
 
 rebuild: ## Build docker containers without cache
