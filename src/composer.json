@@ -1,0 +1,10 @@
+{
+  "name": "acme/widget",
+  "description": "Acme Widget Co",
+  "type": "project",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+    "nikic/fast-route": "^1.3"
+  }
+}
