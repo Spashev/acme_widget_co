@@ -1,7 +1,9 @@
 <?php
 
+use App\Controllers\IndexController;
+
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', function () {
-        echo phpinfo();
+        (new IndexController())->home();
     });
 });
