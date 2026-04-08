@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Repositories\CartRepository;
 use App\Repositories\ProductRepository;
+use App\Rules\DiscountRule;
 use App\Services\CartService;
 use App\Services\ProductService;
 use App\Requests\AddToCartRequest;
@@ -26,7 +27,11 @@ class CartController
         $pdo = Database::getInstance()->getConnection();
 
         $this->cartService = new CartService(
-            new CartRepository($pdo)
+            new CartRepository($pdo),
+            new ProductRepository($pdo),
+            [
+                new DiscountRule(),
+            ]
         );
         $this->productService = new ProductService(
           new ProductRepository($pdo)  
@@ -60,11 +65,20 @@ class CartController
     
     public function getCartTotal(int $cartId = 0): void
     {
-        echo $cartId;
+        try {
+            $this->json($this->cartService->getTotal($cartId));
+        } catch (JsonException|RuntimeException $e) {
+            $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function deleteCart(int $cartId = 0): void
     {
-        echo $cartId;
+        try {
+            $this->cartService->deleteCart($cartId);
+            $this->json(['message' => 'Cart deleted'], 204);
+        } catch (JsonException|RuntimeException $e) {
+            $this->error($e->getMessage(), $e->getCode());
+        }
     }
 }

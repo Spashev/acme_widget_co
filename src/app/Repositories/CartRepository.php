@@ -35,6 +35,14 @@ readonly class CartRepository
         ]);
     }
 
+    public function delete(int $cartId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM carts WHERE id = :cart_id');
+        $stmt->execute(['cart_id' => $cartId]);
+
+        $this->deleteCartItems($cartId);
+    }
+    
     public function exists(int $cartId): bool
     {
         /** @var PDOStatement $stmt */
@@ -56,5 +64,11 @@ readonly class CartRepository
         $stmt->execute(['cart_id' => $cartId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function deleteCartItems(int $cartId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM cart_items WHERE cart_id = :cart_id');
+        $stmt->execute(['cart_id' => $cartId]);
     }
 }
