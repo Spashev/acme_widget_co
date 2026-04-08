@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Database;
-use App\Repositories\ProductRepository;
+use App\Factory\ProductServiceFactory;
 use App\Services\ProductService;
 use App\Traits\JsonResponse;
 use JsonException;
@@ -19,11 +18,7 @@ class IndexController
     
     public function __construct()
     {
-        $pdo = Database::getInstance()->getConnection();
-        
-        $this->productService = new ProductService(
-            new ProductRepository($pdo)
-        );
+        $this->productService = ProductServiceFactory::create();
     }
 
     public function home(): void

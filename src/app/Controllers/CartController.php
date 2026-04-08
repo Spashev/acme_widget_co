@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Database;
-use App\Repositories\CartRepository;
-use App\Repositories\ProductRepository;
-use App\Rules\DiscountRule;
+use App\Factory\CartServiceFactory;
+use App\Factory\ProductServiceFactory;
 use App\Services\CartService;
 use App\Services\ProductService;
 use App\Requests\AddToCartRequest;
@@ -24,18 +22,8 @@ class CartController
 
     public function __construct()
     {
-        $pdo = Database::getInstance()->getConnection();
-
-        $this->cartService = new CartService(
-            new CartRepository($pdo),
-            new ProductRepository($pdo),
-            [
-                new DiscountRule(),
-            ]
-        );
-        $this->productService = new ProductService(
-          new ProductRepository($pdo)  
-        );
+        $this->cartService = CartServiceFactory::create();
+        $this->productService = ProductServiceFactory::create();
     }
 
     public function addItem(int $cartId = 0): void
