@@ -56,4 +56,14 @@ class CartController
             $this->error($e->getMessage(), $e->getCode());
         }
     }
+    
+    public function getCartTotal(int $cartId = 0): void
+    {
+        echo $cartId;
+    }
+
+    public function deleteCart(int $cartId = 0): void
+    {
+        echo $cartId;
+    }
 }
