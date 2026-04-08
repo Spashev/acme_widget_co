@@ -11,6 +11,7 @@ use App\Services\CartService;
 use App\Services\ProductService;
 use App\Requests\AddToCartRequest;
 use App\Traits\JsonResponse;
+use JsonException;
 use RuntimeException;
 
 class CartController
@@ -48,11 +49,11 @@ class CartController
             $this->json(
                 [
                     'message' => 'Product added',
-                    'cart' => $cart
+                    'cart' => $cart->toArray()
                 ],
                 201
             );
-        } catch (RuntimeException $e) {
+        } catch (JsonException|RuntimeException $e) {
             $this->error($e->getMessage(), $e->getCode());
         }
     }

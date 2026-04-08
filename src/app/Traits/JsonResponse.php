@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use JsonException;
+
 trait JsonResponse
 {
+    /**
+     * @throws JsonException
+     */
     protected function json(array $data, int $statusCode = 200): void
     {
         header('Content-Type: application/json');
