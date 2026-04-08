@@ -11,15 +11,6 @@ readonly class CartRepository
 {
     public function __construct(private PDO $pdo) {}
 
-    public function exists(int $cartId): bool
-    {
-        /** @var PDOStatement $stmt */
-        $stmt = $this->pdo->prepare('SELECT 1 FROM carts WHERE id = :id');
-        $stmt->execute(['id' => $cartId]);
-
-        return (bool) $stmt->fetch();
-    }
-
     public function create(): int
     {
         $this->pdo->prepare('INSERT INTO carts () VALUES ()')->execute();
@@ -44,6 +35,15 @@ readonly class CartRepository
         ]);
     }
 
+    public function exists(int $cartId): bool
+    {
+        /** @var PDOStatement $stmt */
+        $stmt = $this->pdo->prepare('SELECT 1 FROM carts WHERE id = :id');
+        $stmt->execute(['id' => $cartId]);
+
+        return (bool) $stmt->fetch();
+    }
+    
     public function findWithItems(int $cartId): array
     {
         /** @var PDOStatement $stmt */

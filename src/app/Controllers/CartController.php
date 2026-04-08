@@ -9,6 +9,7 @@ use App\Repositories\CartRepository;
 use App\Repositories\ProductRepository;
 use App\Services\CartService;
 use App\Services\ProductService;
+use App\Requests\AddToCartRequest;
 use App\Traits\JsonResponse;
 use RuntimeException;
 
@@ -31,34 +32,26 @@ class CartController
         );
     }
 
-    public function addItem(int $cartId = 0)
+    public function addItem(int $cartId = 0): void
     {
-        $input = json_decode(file_get_contents('php://input'), true) ?? [];
-
-        $productCode = $input['product_code'] ?? null;
-        $quantity = $input['quantity'] ?? 1;
-
-        if (empty($productCode) || !is_string($productCode)) {
-            $this->error("product_code is required", 422);
-            return;
-        }
-
         $catalogue = $this->productService->getProducts();
         
-        if (!isset($catalogue[$productCode])) {
-            $this->error("Product '$productCode' not found", 422);
-            return;
-        }
+        $request = new AddToCartRequest($catalogue);
 
-        if (!is_int($quantity) || $quantity < 1) {
-            $this->error('quantity must be a positive integer', 422);
+        if (!$request->isValid()) {
+            $this->error(implode(', ', $request->getErrors()), 422);
             return;
         }
 
         try {
-            $cart = $this->cartService->addItem($cartId, $productCode, $quantity);
-            $this->json(['message' => 'Product added', 'cart' => $cart], 201);
-            return;
+            $cart = $this->cartService->addItem($cartId, $request->productCode, $request->quantity);
+            $this->json(
+                [
+                    'message' => 'Product added',
+                    'cart' => $cart
+                ],
+                201
+            );
         } catch (RuntimeException $e) {
             $this->error($e->getMessage(), $e->getCode());
         }
